@@ -38,8 +38,8 @@ function init(){
         .data(data.nodes)
         .enter()
         .append('rect')
-        .attr("width", 500)
-        .attr("height",500)
+        .attr("width", 50)
+        .attr("height",50)
 
     force = d3.layout.force()
         .nodes(devices)
