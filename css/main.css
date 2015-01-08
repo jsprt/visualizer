@@ -1,0 +1,14 @@
+.device {
+    stroke: #fff;
+    stroke-width: 1.5px;
+}
+
+.device text{
+    font: 9px helvetica;
+}
+
+.link {
+    stroke: #999;
+    stroke-opacity: .6;
+}
+
