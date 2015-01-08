@@ -57,6 +57,8 @@ function init(data){
         .append('rect')
         .attr("class",'device')
         .attr("width", 50)
+        .attr("rx",5)
+        .attr("ry",5)
         .attr("height",50)
         .style("fill", function(d) { return color(d.group); })
 
@@ -85,7 +87,13 @@ function init(data){
         connection.attr("x1", function(d) { return d.source.x + 25; })
             .attr("y1", function(d) { return d.source.y + 25; })
             .attr("x2", function(d) { return d.target.x + 25; })
-            .attr("y2", function(d) { return d.target.y + 25; });
+            .attr("y2", function(d) { return d.target.y + 25; })
+            .attr("class" , function(d){
+                if(d.value ===6){
+                    return "link_backup";
+                }else
+                return "link";
+            })
 
         devices.attr("x", function(d) { return d.x; })
             .attr("y", function(d) { return d.y; });

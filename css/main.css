@@ -9,6 +9,10 @@
 
 .link {
     stroke: #999;
-    stroke-opacity: .6;
 }
 
+.link_backup {
+    stroke: #D11C24;
+    stroke-opacity: .6;
+    stroke-dasharray: 20,10,5,5,5,10;
+}
