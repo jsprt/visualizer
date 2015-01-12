@@ -1,5 +1,5 @@
 var height = 600
-    , width = 2500
+    , width = 2000
     ,rect_height = 50
     ,rect_width = 50
     , totallocs
@@ -7,8 +7,9 @@ var height = 600
     ,connection
     , force
     , padding=30  //padding to avoid collision
-    , foci =[]
-    , fociFactor = 100
+    , off = 15    // cluster hull offset
+    , hull
+    , hullg
 
     ,palette = {
         "gray": "#708284",
@@ -35,6 +36,8 @@ var container = d3.select("body")
     .attr("height",height)
     .attr("width",width);
 
+ hullg = container.append("g");
+
 /*container.attr("opacity", 1e-6)
  .transition()
  .duration(2000)
@@ -48,6 +51,15 @@ d3.json("json/network.json", function(json){
     data = json;
     init(data);
 } );
+
+
+function drawCluster(d) {
+    return curve(d.path); // 0.8
+}
+
+var curve = d3.svg.line()
+    .interpolate("cardinal-closed")
+    .tension(.85);
 
 function init(data){
 
@@ -85,7 +97,7 @@ function init(data){
         })
 
     devices.append("text")
-     .text(function(d) { return d.name })
+        .text(function(d) { return d.name })
 
 
     connection = container.selectAll(".link")
@@ -104,7 +116,13 @@ function init(data){
         .text(function(d){return d.name;})
         .call(force.drag);
 
-
+    hullg.selectAll("path.hull").remove();
+    hull = hullg.selectAll("path.hull")
+        .data(convexHulls(data.nodes))
+        .enter().append("path")
+        .attr("class", "hull")
+        .attr("d", drawCluster)
+        .style("fill", function(d) { return fill(d.group); })
 
     // Resolve collisions between nodes.
 
@@ -140,7 +158,41 @@ function init(data){
         };
     }
 
+
+    function convexHulls(nodes) {
+        offset = off;
+        var hulls = {};
+
+        // create point sets
+        for (var k=0; k<nodes.length; ++k) {
+            var n = nodes[k];
+            if (n.size) continue;
+                l = hulls[i] || (hulls[group] = []);
+            l.push([n.x-offset, n.y-offset]);
+            l.push([n.x-offset, n.y+ rect_height + offset]);
+            l.push([n.x+ rect_width + offset, n.y-offset]);
+            l.push([n.x+ rect_width + offset, n.y+ rect_height + offset]);
+        }
+
+        // create convex hulls
+        var hullset = [];
+        for (i in hulls) {
+            hullset.push({group: i, path: d3.geom.hull(hulls[i])});
+        }
+
+        return hullset;
+    }
+
+
     force.on("tick" ,function(e){
+
+
+       // hull.datum(d3.geom.hull([[10,10],[10,200],[200,200],[200,10]])).attr("d", function(d) { return "M" + d.join("L") + "Z"; });
+
+
+
+
+
 
         connection.attr("x1", function(d) { return d.source.x + 25; })
             .attr("y1", function(d) { return d.source.y + 25; })
@@ -152,21 +204,18 @@ function init(data){
             .classed("stronglink" , function(d){     return (d.source.group === d.target.group)});
 
         devices.each(gravity( 0.2 * e.alpha));
-       // devices.each(collide(0.5));
+        // devices.each(collide(0.5));
         /*   while (++i < n) {
          q.visit(collide(devices[0][i]));
          }*/
-        try {
+
             devices.attr("x", function (d) {
                 return d.x;
             });
             devices.attr("y", function (d) {
                 return d.y;
             });
-        }catch(err)
-        {
-            console.log(err);
-        }
+
         labels.attr("x", function(d) {
             return d.x;
         })
@@ -174,16 +223,22 @@ function init(data){
                 return d.y;
             });
 
+        if (!hull.empty()) {
+            hull.data(convexHulls(net.nodes))
+                .attr("d", drawCluster);
+        }
+
+
     });
 
     force.linkStrength(function(connection){
-     if (connection.source.group === connection.target.group) return 1;
-     return 0.1;
-     });
-     force.linkDistance(function(connection){
-     if (connection.source.group === connection.target.group) return 75;
-     return 250;
-     });
+        if (connection.source.group === connection.target.group) return 1;
+        return 0.1;
+    });
+    force.linkDistance(function(connection){
+        if (connection.source.group === connection.target.group) return 75;
+        return 250;
+    });
 
     // copied from http://bl.ocks.org/dobbs/1d353282475013f5c156
     function overlap(a,b){
@@ -205,8 +260,8 @@ var contextMenu = function(context, dataum , index) {
         .style('top', position[1] + "px")
         .style('display', 'inline-block')
         .on("mouseleave", function() {
-         d3.select('#context-menu').style('display', 'none');
-          context = null;
+            d3.select('#context-menu').style('display', 'none');
+            context = null;
         });
     d3.select('#context-menu').attr('class', 'menu ' + context);
 }
