@@ -1,4 +1,5 @@
 {
+    "totallocs":6,
     "nodes":[
         {"name":"Keilor DN2","group":1},
         {"name":"Albury DM2","group":1},
@@ -17,11 +18,11 @@
         {"name":"DB2B","group":5},
         {"name":"DB2LP","group":5},
 
-        {"name":"SUPSUB","group":8},
+        {"name":"SUPSUB","group":6},
 
-        {"name":"DB5","group":8},
-        {"name":"DN2WODONGA","group":8},
-        {"name":"DMx","group":8}
+        {"name":"DB5","group":6},
+        {"name":"DN2WODONGA","group":6},
+        {"name":"DMx","group":6}
     ],
     "links":[
         {"source":0,"target":1,"value":1},

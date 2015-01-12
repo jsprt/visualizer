@@ -11,8 +11,33 @@
     stroke: #999;
 }
 
-.link_backup {
+.linkbackup {
     stroke: #D11C24;
     stroke-opacity: .6;
     stroke-dasharray: 20,10,5,5,5,10;
+}
+
+
+.menu {
+    border: 1px solid black;
+    background-color: grey;
+    position: relative;
+}
+.menu,
+.menu li {
+    padding: 0px;
+    margin: 0px;
+}
+.menu li {
+    color: white;
+}
+.menu > li:hover {
+    background-color: lightblue;
+    color: black;
+}
+
+.menu li:hover ul {
+    display:inline-block;
+    position: relative;
+    top: 0;
 }
