@@ -1,10 +1,12 @@
 .device {
     stroke: #fff;
     stroke-width: 1.5px;
-}
 
-.device text{
-    font: 9px helvetica;
+}
+text{
+    font: 18px helvetica;
+    text-shadow:10px 10px 10px blue;
+
 }
 
 .link {
@@ -13,9 +15,9 @@
 
 .faulytlink{
     stroke: #d10005;
-    stroke-opacity: .6;
     stroke-dasharray: 8,8;
 }
+
 .prallelpath {
     stroke: #5d1ed1;
     stroke-opacity: .6;
@@ -23,8 +25,7 @@
 }
 
 .linkbackup {
-    stroke: #187b3e;
-    stroke-opacity: .6;
+    stroke: #017b00;
     stroke-dasharray: 20,10,5,5,5,10;
 }
 
@@ -61,13 +62,3 @@ ul {
 }
 
 
-@keyframes hideshow {
-    0% { opacity: 1; }
-    10% { opacity: 1; }
-    15% { opacity: 0; }
-    100% { opacity: 0; }
-}
-
-.faultydevice {
-    animation: hideshow 1s ease infinite;
-}

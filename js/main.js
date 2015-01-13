@@ -11,8 +11,8 @@ var height = 600
     , off = 15    // cluster hull offset
     , hull
     , hullg
-    , hulls = {}
-    , hullset = []
+    //, hulls = {}
+    //, hullset = []
     , linkdiff = 20
 
     ,palette = {
@@ -77,7 +77,8 @@ function init(data){
         .size([width,height])
         .charge(-1000)
         .gravity(.02)
-        .friction(0.9);
+        .friction(0.9)
+        .start()
 
     devices = container.selectAll('.device')
         .data(data.nodes)
@@ -85,15 +86,24 @@ function init(data){
         .append('g')
         .call(force.drag)
         .append('rect')
-        .classed("device" , function(d){     return ()})
+        .classed("device" , function(d){return true;})
+        .classed("faultydevice" , function(d){if(d.alarmstatus != undefined && d.alarmstatus === "critical"){
+            return true;
+        }})
         .attr("width", rect_width)
         .attr("rx",5)
         .attr("fill-opacity",0)
         .attr("ry",5)
         .attr("height",rect_height)
-        .style("fill", function(d) { return color(d.group); })
+        .style("fill", function(d){if(d.alarmstatus != undefined && d.alarmstatus === "critical"){
+            return "red";
+        }})
 
-
+    d3.selectAll(".faultydevice").transition()
+        .delay(100)
+        .duration(4000)
+        .attr("fill" ,"#FF0000")
+        .attr('fill-opacity', 1);
 
 
     devices.append("text")
@@ -110,7 +120,8 @@ function init(data){
             "y":function(d){return d.y;}})
         .attr("xlink:href", function (d){
             if(d.devtype ==="switch"){
-                return "assets/img/Switch.svg";}
+                return "assets/img/Switch.svg";
+            }
             else{
                 return "assets/img/Router.svg";
             }
@@ -139,13 +150,13 @@ function init(data){
         .text(function(d){return d.name;})
         .call(force.drag);
 
-    /*  hullg.selectAll("path.hull").remove();
-     hull = hullg.selectAll("path.hull")
-     .data(convexHulls(data.nodes))
-     .enter().append("path")
-     .attr("class", "hull")
-     .attr("d", drawCluster)
-     .style("fill", function(d) { return fill(d.group); })*/
+    hullg.selectAll("path.hull").remove();
+    hull = hullg.selectAll("path.hull")
+        .data(convexHulls(data.nodes))
+        .enter().append("path")
+        .attr("class", "hull")
+        .attr("d", drawCluster)
+        .style("fill", function(d) { return color(d.group); })
 
     // Resolve collisions between nodes.
 
@@ -207,7 +218,8 @@ function init(data){
     }
 
     function convexHulls(nodes) {
-
+        hulls = {};
+        hullset = [];
         // create point sets
         for (var k=0; k<nodes.length; ++k) {
             convexHullPoints(nodes[k]);
@@ -222,7 +234,10 @@ function init(data){
 
 
         //hull.datum(d3.geom.hull([[10,10],[10,200],[200,200],[200,10]])).attr("d", function(d) { return "M" + d.join("L") + "Z"; });
-
+        if (!hull.empty()) {
+            hull.data(convexHulls(data.nodes))
+                .attr("d", drawCluster);
+        }
         connection
             .attr("x1", function(d) {
                 if(d.value === 1 || d.value === 2  || d.value === 33) {
@@ -293,11 +308,7 @@ function init(data){
             .attr("y", function(d) {
                 return d.y;
             });
-        /*  if (!hull.empty()) {
-         hull.data(convexHulls(net.nodes))
-         .attr("d", drawCluster);
-         }
-         */
+
 
     });
 
@@ -323,13 +334,13 @@ function init(data){
             , by1 = b.y, by2 = b.y + rect_height;
 
         return   (( bx1 >= ax1 && bx1 <= ax2 ) && ( by1 >= ay1 && by1<ay2 ) //check b top left corner
-            || ( bx1 >= ax1 && bx1 <= ax2 ) && ( by2 >= ay1 && by2 <= ay2) //check b bottom left corner
-            || ( bx2 >= ax1 && bx2 <= ax2 ) && ( by2 >= ay1 && by2 <= ay2 )//check b bottom right corner
-            || ( bx2 >= ax1 && bx2 <= ax2 ) && ( by1 >= ay1 && by1<ay2 ));//check b top right corner
+        || ( bx1 >= ax1 && bx1 <= ax2 ) && ( by2 >= ay1 && by2 <= ay2) //check b bottom left corner
+        || ( bx2 >= ax1 && bx2 <= ax2 ) && ( by2 >= ay1 && by2 <= ay2 )//check b bottom right corner
+        || ( bx2 >= ax1 && bx2 <= ax2 ) && ( by1 >= ay1 && by1<ay2 ));//check b top right corner
     }
 
     //starts the force calculations to layout nodes
-    force.start();
+    // force.start();
 }
 
 

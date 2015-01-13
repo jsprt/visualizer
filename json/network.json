@@ -10,8 +10,8 @@
         {"name":"PDH080","type":"primary","devtype":"switch","group":2},
 
         {"name":"DM8","type":"primary","devtype":"router","group":3},
-        {"name":"DM34","type":"primary","devtype":"switch","group":3},
-        {"name":"DB4Euro","type":"primary","devtype":"switch","group":3},
+        {"name":"DM34","type":"primary","devtype":"switch","group":3 , "alarmstatus":"critical"},
+        {"name":"DB4Euro","type":"primary","devtype":"switch","group":3, "alarmstatus":"critical"},
 
         {"name":"TranslinkDB2","type":"primary","devtype":"switch","group":4},
         {"name":"DN2 CBD","type":"primary","devtype":"switch","group":4},
