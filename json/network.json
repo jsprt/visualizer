@@ -2,36 +2,36 @@
     "primarygroups": 6,
     "secondarygroups": 2,
     "nodes":[
-        {"name":"Keilor DN2","type":"primary","group":1},
-        {"name":"Albury DM2","type":"primary","group":1},
-        {"name":"Ballarat DB4x","type":"primary","group":1},
+        {"name":"Keilor DN2","type":"primary","devtype":"switch","group":1},
+        {"name":"Albury DM2","type":"primary","devtype":"switch","group":1},
+        {"name":"Ballarat DB4x","type":"primary","devtype":"switch","group":1},
 
-        {"name":"SDH001","type":"primary","group":2},
-        {"name":"PDH080","type":"primary","group":2},
+        {"name":"SDH001","type":"primary","devtype":"switch","group":2},
+        {"name":"PDH080","type":"primary","devtype":"switch","group":2},
 
-        {"name":"DM8","type":"primary","group":3},
-        {"name":"DM34","type":"primary","group":3},
-        {"name":"DB4Euro","type":"primary","group":3},
+        {"name":"DM8","type":"primary","devtype":"router","group":3},
+        {"name":"DM34","type":"primary","devtype":"switch","group":3},
+        {"name":"DB4Euro","type":"primary","devtype":"switch","group":3},
 
-        {"name":"TranslinkDB2","type":"primary","group":4},
-        {"name":"DN2 CBD","type":"primary","group":4},
+        {"name":"TranslinkDB2","type":"primary","devtype":"switch","group":4},
+        {"name":"DN2 CBD","type":"primary","devtype":"switch","group":4},
 
-        {"name":"DB2B","type":"primary","group":5},
-        {"name":"DB2LP","type":"primary","group":5},
+        {"name":"DB2B","type":"primary","devtype":"switch","group":5},
+        {"name":"DB2LP","type":"primary","devtype":"router","group":5},
 
-        {"name":"SUPSUB","type":"primary","group":6},
+        {"name":"SUPSUB","type":"primary","devtype":"switch","group":6},
 
-        {"name":"DB5","type":"primary","group":6},
-        {"name":"DN2WODONGA","type":"primary","group":6},
-        {"name":"DMx","type":"primary","group":6},
+        {"name":"DB5","type":"primary","devtype":"switch","group":6},
+        {"name":"DN2WODONGA","type":"primary","devtype":"switch","group":6},
+        {"name":"DMx","type":"primary","devtype":"router","group":6},
 
-        {"name":"DB5","type":"backup","group":7},
-        {"name":"DN2WODONGA","type":"backup","group":7},
-        {"name":"DMx","type":"backup","group":7},
+        {"name":"DB5","type":"backup","devtype":"switch","group":7},
+        {"name":"DN2WODONGA","type":"backup","devtype":"switch","group":7},
+        {"name":"DMx","type":"backup","devtype":"switch","group":7},
 
-        {"name":"DB5","type":"backup","group":8},
-        {"name":"DN2WODONGA","type":"backup","group":8},
-        {"name":"DMx","type":"backup","group":8}
+        {"name":"DB5","type":"backup","devtype":"switch","group":8},
+        {"name":"DN2WODONGA","type":"backup","devtype":"switch","group":8},
+        {"name":"DMx","type":"backup","devtype":"router","group":8}
 
     ],
     "links":[
@@ -50,6 +50,22 @@
         {"source":12,"target":13,"value":1},
         {"source":13,"target":14,"value":1},
         {"source":14,"target":15,"value":1},
+
+        {"source":0,"target":1,"value":11},
+        {"source":1,"target":2,"value":11},
+        {"source":2,"target":3,"value":11},
+        {"source":3,"target":4,"value":11},
+        {"source":4,"target":5,"value":11},
+        {"source":5,"target":6,"value":11},
+        {"source":6,"target":7,"value":11},
+        {"source":7,"target":8,"value":11},
+        {"source":8,"target":9,"value":11},
+        {"source":9,"target":10,"value":11},
+        {"source":10,"target":11,"value":11},
+        {"source":11,"target":12,"value":11},
+        {"source":12,"target":13,"value":11},
+        {"source":13,"target":14,"value":11},
+        {"source":14,"target":15,"value":11},
 
         {"source":3,"target":16,"value":2},
         {"source":16,"target":17,"value":2},

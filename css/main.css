@@ -11,8 +11,15 @@
     stroke: #999;
 }
 
+.prallelpath {
+    stroke: #46D1C9;
+    stroke-opacity: .6;
+    stroke-dasharray: 15,15;
+    animation: dash 5s linear;
+}
+
 .linkbackup {
-    stroke: #D11C24;
+    stroke: #0e764f;
     stroke-opacity: .6;
     stroke-dasharray: 20,10,5,5,5,10;
 }

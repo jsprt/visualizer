@@ -13,6 +13,7 @@ var height = 600
     , hullg
     , hulls = {}
     , hullset = []
+    , linkdiff = 20
 
     ,palette = {
         "gray": "#708284",
@@ -39,7 +40,7 @@ var container = d3.select("body")
     .attr("height",height)
     .attr("width",width);
 
- hullg = container.append("g");
+hullg = container.append("g");
 
 /*container.attr("opacity", 1e-6)
  .transition()
@@ -90,6 +91,7 @@ function init(data){
         .attr("ry",5)
         .attr("height",rect_height)
         .style("fill", function(d) { return color(d.group); })
+
         .on("contextmenu" ,function(d,i){
             contextMenu(this,d,i)
             d3.event.preventDefault();
@@ -97,9 +99,27 @@ function init(data){
             console.log(i);
         })
 
+
     devices.append("text")
         .text(function(d) { return d.name })
 
+    images = container.selectAll(".devtypeimage")
+        .data(data.nodes)
+        .enter()
+        .append("image")
+        .attr("class", "devtypeimage")
+        .attr("height" ,"50")
+        .attr("width" ,"50")
+        .attr({"x":function(d){return d.x;},
+        "y":function(d){return d.y;}})
+        .attr("xlink:href", function (d){
+            if(d.devtype ==="switch"){
+            return "assets/img/Switch.svg";}
+            else{
+                return "assets/img/Router.svg";}
+            }
+        })
+        .call(force.drag)
 
     connection = container.selectAll(".link")
         .data(data.links)
@@ -117,13 +137,13 @@ function init(data){
         .text(function(d){return d.name;})
         .call(force.drag);
 
-  /*  hullg.selectAll("path.hull").remove();
-    hull = hullg.selectAll("path.hull")
-        .data(convexHulls(data.nodes))
-        .enter().append("path")
-        .attr("class", "hull")
-        .attr("d", drawCluster)
-        .style("fill", function(d) { return fill(d.group); })*/
+    /*  hullg.selectAll("path.hull").remove();
+     hull = hullg.selectAll("path.hull")
+     .data(convexHulls(data.nodes))
+     .enter().append("path")
+     .attr("class", "hull")
+     .attr("d", drawCluster)
+     .style("fill", function(d) { return fill(d.group); })*/
 
     // Resolve collisions between nodes.
 
@@ -132,8 +152,8 @@ function init(data){
     function gravity(alpha) {
         return function(d) {
             if (d.type == "primary"){
-            d.y += (height/4 - (d.y)) * alpha;
-            d.x += (primarylocationPoints(d.group -1) - d.x) * alpha;
+                d.y += (height/4 - (d.y)) * alpha;
+                d.x += (primarylocationPoints(d.group -1) - d.x) * alpha;
             }else{
                 d.y += (height*3/4 - (d.y)) * alpha;
                 d.x += (secondarylocationPoints(d.group -1 -primarygroups ) - d.x) * alpha;
@@ -201,11 +221,40 @@ function init(data){
 
         //hull.datum(d3.geom.hull([[10,10],[10,200],[200,200],[200,10]])).attr("d", function(d) { return "M" + d.join("L") + "Z"; });
 
-        connection.attr("x1", function(d) { return d.source.x + 25; })
-            .attr("y1", function(d) { return d.source.y + 25; })
-            .attr("x2", function(d) { return d.target.x + 25; })
-            .attr("y2", function(d) { return d.target.y + 25; })
+        connection
+            .attr("x1", function(d) {
+                if(d.value === 1 || d.value === 2) {
+                    return d.source.x + rect_width / 2;
+                }else if (d.value === 11){
+                    return d.source.x + rect_width / 2 + linkdiff;
+                }
+            })
+
+            .attr("x2", function(d) {
+                if(d.value === 1 || d.value === 2) {
+                    return d.target.x + rect_width / 2;
+                }else if (d.value === 11){
+                    return d.target.x + rect_width / 2 + linkdiff;
+                }
+            })
+
+            .attr("y1", function(d) {
+                if(d.value === 1 || d.value === 2) {
+                    return d.source.y + rect_width / 2;
+                }else if (d.value === 11){
+                    return d.source.y + rect_width / 2 + linkdiff;
+                }
+            })
+
+            .attr("y2", function(d) {
+                if(d.value === 1 || d.value === 2) {
+                    return d.target.y + rect_width / 2;
+                }else if (d.value === 11){
+                    return d.target.y + rect_width / 2 + linkdiff;
+                }
+            })
             .classed("linkbackup" , function(d){     return (d.value ===2)})
+            .classed("prallelpath" , function(d){     return (d.value ===11)})
             .classed("link" , function(d){     return (d.value !=2)})
             .classed("weaklink" , function(d){     return (d.source.group !== d.target.group)})
             .classed("stronglink" , function(d){     return (d.source.group === d.target.group)});
@@ -216,12 +265,12 @@ function init(data){
          q.visit(collide(devices[0][i]));
          }*/
 
-            devices.attr("x", function (d) {
-                return d.x;
-            });
-            devices.attr("y", function (d) {
-                return d.y;
-            });
+        devices.attr("x", function (d) {
+            return d.x;
+        });
+        devices.attr("y", function (d) {
+            return d.y;
+        });
 
         labels.attr("x", function(d) {
             return d.x;
@@ -229,11 +278,19 @@ function init(data){
             .attr("y", function(d) {
                 return d.y;
             });
-      /*  if (!hull.empty()) {
-            hull.data(convexHulls(net.nodes))
-                .attr("d", drawCluster);
-        }
-*/
+
+
+        images.attr("x", function(d) {
+            return d.x;
+        })
+            .attr("y", function(d) {
+                return d.y;
+            });
+        /*  if (!hull.empty()) {
+         hull.data(convexHulls(net.nodes))
+         .attr("d", drawCluster);
+         }
+         */
 
     });
 
@@ -245,11 +302,11 @@ function init(data){
         }
     });
 
- /*   force.linkDistance(function(connection){
-        if (connection.source.group != connection.target.group){ return 1000;}
+    /*   force.linkDistance(function(connection){
+     if (connection.source.group != connection.target.group){ return 1000;}
 
-    });
-*/
+     });
+     */
     // copied from http://bl.ocks.org/dobbs/1d353282475013f5c156
     function overlap(a,b)
     {
@@ -259,9 +316,9 @@ function init(data){
             , by1 = b.y, by2 = b.y + rect_height;
 
         return   (( bx1 >= ax1 && bx1 <= ax2 ) && ( by1 >= ay1 && by1<ay2 ) //check b top left corner
-                || ( bx1 >= ax1 && bx1 <= ax2 ) && ( by2 >= ay1 && by2 <= ay2) //check b bottom left corner
-                || ( bx2 >= ax1 && bx2 <= ax2 ) && ( by2 >= ay1 && by2 <= ay2 )//check b bottom right corner
-                || ( bx2 >= ax1 && bx2 <= ax2 ) && ( by1 >= ay1 && by1<ay2 ));//check b top right corner
+            || ( bx1 >= ax1 && bx1 <= ax2 ) && ( by2 >= ay1 && by2 <= ay2) //check b bottom left corner
+            || ( bx2 >= ax1 && bx2 <= ax2 ) && ( by2 >= ay1 && by2 <= ay2 )//check b bottom right corner
+            || ( bx2 >= ax1 && bx2 <= ax2 ) && ( by1 >= ay1 && by1<ay2 ));//check b top right corner
     }
 
     //starts the force calculations to layout nodes
