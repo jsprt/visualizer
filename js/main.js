@@ -1,7 +1,7 @@
 var height = 600
     , width = 2000
-    ,rect_height = 50
-    ,rect_width = 50
+    ,rect_height = 70
+    ,rect_width = 70
     , primarygroups
     , secondarygroups
     , devices
@@ -76,7 +76,7 @@ function init(data){
         .links(data.links)
         .size([width,height])
         .charge(-1000)
-        .gravity(.08)
+        .gravity(.02)
         .friction(0.9);
 
     devices = container.selectAll('.device')
@@ -85,19 +85,15 @@ function init(data){
         .append('g')
         .call(force.drag)
         .append('rect')
-        .attr("class",'device')
+        .classed("device" , function(d){     return ()})
         .attr("width", rect_width)
         .attr("rx",5)
+        .attr("fill-opacity",0)
         .attr("ry",5)
         .attr("height",rect_height)
         .style("fill", function(d) { return color(d.group); })
 
-        .on("contextmenu" ,function(d,i){
-            contextMenu(this,d,i)
-            d3.event.preventDefault();
-            console.log(d);
-            console.log(i);
-        })
+
 
 
     devices.append("text")
@@ -108,16 +104,22 @@ function init(data){
         .enter()
         .append("image")
         .attr("class", "devtypeimage")
-        .attr("height" ,"50")
-        .attr("width" ,"50")
+        .attr("height" ,"60")
+        .attr("width" ,"60")
         .attr({"x":function(d){return d.x;},
-        "y":function(d){return d.y;}})
+            "y":function(d){return d.y;}})
         .attr("xlink:href", function (d){
             if(d.devtype ==="switch"){
-            return "assets/img/Switch.svg";}
+                return "assets/img/Switch.svg";}
             else{
-                return "assets/img/Router.svg";}
+                return "assets/img/Router.svg";
             }
+        })
+        .on("contextmenu" ,function(d,i){
+            contextMenu(this,d,i)
+            d3.event.preventDefault();
+            console.log(d);
+            console.log(i);
         })
         .call(force.drag)
 
@@ -223,7 +225,7 @@ function init(data){
 
         connection
             .attr("x1", function(d) {
-                if(d.value === 1 || d.value === 2) {
+                if(d.value === 1 || d.value === 2  || d.value === 33) {
                     return d.source.x + rect_width / 2;
                 }else if (d.value === 11){
                     return d.source.x + rect_width / 2 + linkdiff;
@@ -231,7 +233,7 @@ function init(data){
             })
 
             .attr("x2", function(d) {
-                if(d.value === 1 || d.value === 2) {
+                if(d.value === 1 || d.value === 2 || d.value === 33) {
                     return d.target.x + rect_width / 2;
                 }else if (d.value === 11){
                     return d.target.x + rect_width / 2 + linkdiff;
@@ -239,7 +241,7 @@ function init(data){
             })
 
             .attr("y1", function(d) {
-                if(d.value === 1 || d.value === 2) {
+                if(d.value === 1 || d.value === 2 || d.value === 33) {
                     return d.source.y + rect_width / 2;
                 }else if (d.value === 11){
                     return d.source.y + rect_width / 2 + linkdiff;
@@ -247,12 +249,13 @@ function init(data){
             })
 
             .attr("y2", function(d) {
-                if(d.value === 1 || d.value === 2) {
+                if(d.value === 1 || d.value === 2 || d.value === 33) {
                     return d.target.y + rect_width / 2;
                 }else if (d.value === 11){
                     return d.target.y + rect_width / 2 + linkdiff;
                 }
             })
+            .classed("faulytlink" , function(d){     return (d.value ===33)})
             .classed("linkbackup" , function(d){     return (d.value ===2)})
             .classed("prallelpath" , function(d){     return (d.value ===11)})
             .classed("link" , function(d){     return (d.value !=2)})
@@ -260,6 +263,10 @@ function init(data){
             .classed("stronglink" , function(d){     return (d.source.group === d.target.group)});
 
         devices.each(gravity( 0.2 * e.alpha));
+
+        devices.each(gravity( 0.2 * e.alpha));
+
+
         //devices.each(collide(0.5));
         /*   while (++i < n) {
          q.visit(collide(devices[0][i]));
