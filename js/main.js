@@ -2,7 +2,8 @@ var height = 600
     , width = 2000
     ,rect_height = 50
     ,rect_width = 50
-    , totallocs
+    , primarygroups
+    , secondarygroups
     , devices
     ,connection
     , force
@@ -10,6 +11,8 @@ var height = 600
     , off = 15    // cluster hull offset
     , hull
     , hullg
+    , hulls = {}
+    , hullset = []
 
     ,palette = {
         "gray": "#708284",
@@ -45,8 +48,6 @@ var container = d3.select("body")
 
 var color = d3.scale.category20();  // .domain(d3.range(m)); where m is the number of groups
 
-
-
 d3.json("json/network.json", function(json){
     data = json;
     init(data);
@@ -63,19 +64,19 @@ var curve = d3.svg.line()
 
 function init(data){
 
-    totallocs = data.totallocs;
-    var locationPoints = d3.scale.ordinal().domain(d3.range(totallocs)).rangePoints([0,width],1);
+    primarygroups = data.primarygroups;
+    secondarygroups = data.secondarygroups;
+
+    var primarylocationPoints = d3.scale.ordinal().domain(d3.range(primarygroups)).rangePoints([0,width],1);
+    var secondarylocationPoints = d3.scale.ordinal().domain(d3.range(secondarygroups)).rangePoints([0,width],1);
 
     force = d3.layout.force()
         .nodes(data.nodes)
         .links(data.links)
         .size([width,height])
-        .charge(0)
-        .gravity(0.05);
-
-
-
-
+        .charge(-1000)
+        .gravity(.08)
+        .friction(0.9);
 
     devices = container.selectAll('.device')
         .data(data.nodes)
@@ -116,13 +117,13 @@ function init(data){
         .text(function(d){return d.name;})
         .call(force.drag);
 
-    hullg.selectAll("path.hull").remove();
+  /*  hullg.selectAll("path.hull").remove();
     hull = hullg.selectAll("path.hull")
         .data(convexHulls(data.nodes))
         .enter().append("path")
         .attr("class", "hull")
         .attr("d", drawCluster)
-        .style("fill", function(d) { return fill(d.group); })
+        .style("fill", function(d) { return fill(d.group); })*/
 
     // Resolve collisions between nodes.
 
@@ -130,12 +131,19 @@ function init(data){
     // Move nodes toward cluster focus.
     function gravity(alpha) {
         return function(d) {
-            d.y += (height/2 - (d.y)) * alpha;
-            d.x += (locationPoints(d.group -1) - d.x) * alpha;
+            if (d.type == "primary"){
+            d.y += (height/4 - (d.y)) * alpha;
+            d.x += (primarylocationPoints(d.group -1) - d.x) * alpha;
+            }else{
+                d.y += (height*3/4 - (d.y)) * alpha;
+                d.x += (secondarylocationPoints(d.group -1 -primarygroups ) - d.x) * alpha;
+
+            }
+
         };
     }
-    function collide(d) {
-        var quadtree = d3.geom.quadtree(devices);
+    function collide(alpha) {
+        var quadtree = d3.geom.quadtree(data.nodes);
         return function(d) {
             nx1 = d.x - padding;
             nx2 = d.x + rect_width + padding;
@@ -145,10 +153,10 @@ function init(data){
                 var dx, dy;
                 if (quad.point && (quad.point !== d)) {
                     if (overlap(d, quad.point)) {
-                        dx = Math.min(d.x2 - quad.point.x, quad.point.x2 - d.x) / 2;
+                        dx = Math.min((d.x + rect_width) - quad.point.x, (quad.point.x + rect_width) - d.x) / 5;
                         d.x -= dx;
-                        quad.point.x -= dx;
-                        dy = Math.min(d.y2 - quad.point.y, quad.point.y2 - d.y) / 2;
+                        quad.point.x += dx;
+                        dy = Math.min((d.y +rect_height) - quad.point.y, (quad.point.y + rect_height) - d.y) / 5;
                         d.y -= dy;
                         quad.point.y += dy;
                     }
@@ -158,53 +166,52 @@ function init(data){
         };
     }
 
-
-    function convexHulls(nodes) {
+    function convexHullPoints(node){
         offset = off;
-        var hulls = {};
+        var n = node;
+        l = hulls[n.group] || (hulls[n.group] = []);
+        l.push([n.x-offset, n.y-offset]);
+        l.push([n.x-offset, n.y+ rect_height + offset]);
+        l.push([n.x+ rect_width + offset, n.y-offset]);
+        l.push([n.x+ rect_width + offset, n.y+ rect_height + offset]);
+    }
 
-        // create point sets
-        for (var k=0; k<nodes.length; ++k) {
-            var n = nodes[k];
-            if (n.size) continue;
-                l = hulls[i] || (hulls[group] = []);
-            l.push([n.x-offset, n.y-offset]);
-            l.push([n.x-offset, n.y+ rect_height + offset]);
-            l.push([n.x+ rect_width + offset, n.y-offset]);
-            l.push([n.x+ rect_width + offset, n.y+ rect_height + offset]);
-        }
-
+    function convexHullPointSets() {
         // create convex hulls
-        var hullset = [];
         for (i in hulls) {
             hullset.push({group: i, path: d3.geom.hull(hulls[i])});
         }
-
         return hullset;
+    }
+
+    function convexHulls(nodes) {
+
+        // create point sets
+        for (var k=0; k<nodes.length; ++k) {
+            convexHullPoints(nodes[k]);
+        }
+
+        return convexHullPointSets();
+
     }
 
 
     force.on("tick" ,function(e){
 
 
-       // hull.datum(d3.geom.hull([[10,10],[10,200],[200,200],[200,10]])).attr("d", function(d) { return "M" + d.join("L") + "Z"; });
-
-
-
-
-
+        //hull.datum(d3.geom.hull([[10,10],[10,200],[200,200],[200,10]])).attr("d", function(d) { return "M" + d.join("L") + "Z"; });
 
         connection.attr("x1", function(d) { return d.source.x + 25; })
             .attr("y1", function(d) { return d.source.y + 25; })
             .attr("x2", function(d) { return d.target.x + 25; })
             .attr("y2", function(d) { return d.target.y + 25; })
-            .classed("linkbackup" , function(d){     return (d.value ===6)})
-            .classed("link" , function(d){     return (d.value !=6)})
+            .classed("linkbackup" , function(d){     return (d.value ===2)})
+            .classed("link" , function(d){     return (d.value !=2)})
             .classed("weaklink" , function(d){     return (d.source.group !== d.target.group)})
             .classed("stronglink" , function(d){     return (d.source.group === d.target.group)});
 
         devices.each(gravity( 0.2 * e.alpha));
-        // devices.each(collide(0.5));
+        //devices.each(collide(0.5));
         /*   while (++i < n) {
          q.visit(collide(devices[0][i]));
          }*/
@@ -222,34 +229,47 @@ function init(data){
             .attr("y", function(d) {
                 return d.y;
             });
-
-        if (!hull.empty()) {
+      /*  if (!hull.empty()) {
             hull.data(convexHulls(net.nodes))
                 .attr("d", drawCluster);
         }
-
+*/
 
     });
 
     force.linkStrength(function(connection){
-        if (connection.source.group === connection.target.group) return 1;
-        return 0.1;
-    });
-    force.linkDistance(function(connection){
-        if (connection.source.group === connection.target.group) return 75;
-        return 250;
+        if (connection.source.group === connection.target.group){
+            return 0.1;
+        }else{
+            return 1;
+        }
     });
 
+ /*   force.linkDistance(function(connection){
+        if (connection.source.group != connection.target.group){ return 1000;}
+
+    });
+*/
     // copied from http://bl.ocks.org/dobbs/1d353282475013f5c156
-    function overlap(a,b){
-        (a.x < b.x < a.x2() &&  a.y < b.y < a.y2()) ||   (a.x < b.x2() < a.x2() && a.y < b.y2() < a.y2())
+    function overlap(a,b)
+    {
+        var   ax1 = a.x, ax2 = a.x+ rect_width
+            , ay1 = a.y, ay2 = a.y + rect_height
+            , bx1 = b.x, bx2 = b.x+ rect_width
+            , by1 = b.y, by2 = b.y + rect_height;
+
+        return   (( bx1 >= ax1 && bx1 <= ax2 ) && ( by1 >= ay1 && by1<ay2 ) //check b top left corner
+                || ( bx1 >= ax1 && bx1 <= ax2 ) && ( by2 >= ay1 && by2 <= ay2) //check b bottom left corner
+                || ( bx2 >= ax1 && bx2 <= ax2 ) && ( by2 >= ay1 && by2 <= ay2 )//check b bottom right corner
+                || ( bx2 >= ax1 && bx2 <= ax2 ) && ( by1 >= ay1 && by1<ay2 ));//check b top right corner
     }
+
+    //starts the force calculations to layout nodes
     force.start();
 }
 
 
 var contextMenu = function(context, dataum , index) {
-
 
     d3.event.preventDefault();
 
