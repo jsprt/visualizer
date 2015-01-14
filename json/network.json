@@ -67,14 +67,14 @@
         {"source":13,"target":14,"value":11},
         {"source":14,"target":15,"value":11},
 
-        {"source":3,"target":16,"value":2},
+        {"source":3,"target":16,"value":12},
         {"source":16,"target":17,"value":2},
         {"source":17,"target":18,"value":2},
         {"source":18,"target":19,"value":2},
         {"source":19,"target":20,"value":2},
         {"source":20,"target":21,"value":2},
         {"source":20,"target":21,"value":2},
-        {"source":21,"target":14,"value":2}
+        {"source":21,"target":14,"value":21}
 
 
     ]

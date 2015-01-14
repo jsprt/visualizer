@@ -75,11 +75,22 @@ function init(data){
         .nodes(data.nodes)
         .links(data.links)
         .size([width,height])
-        .charge(-1000)
-        .gravity(.02)
+        .charge(-1500)
+        .gravity(0.1)
         .friction(0.9)
+        .linkStrength(function(d) {
+            return (d.value === 12  || d.value === 21) ? 0 : 1;
+        })
         .start()
+    //default settings: size 1×1, link strength 1, friction 0.9, distance 20, charge strength -30, gravity strength 0.1, and theta parameter 0.8
 
+
+    var drag = force.drag()
+        .on("dragstart", dragstart);
+
+    function dragstart(d) {
+        d3.select(this).classed("fixed", d.fixed = true);
+    }
     devices = container.selectAll('.device')
         .data(data.nodes)
         .enter()
@@ -240,7 +251,7 @@ function init(data){
         }
         connection
             .attr("x1", function(d) {
-                if(d.value === 1 || d.value === 2  || d.value === 33) {
+                if(d.value === 1 || d.value === 2  || d.value === 33 || d.value === 12  || d.value === 21) {
                     return d.source.x + rect_width / 2;
                 }else if (d.value === 11){
                     return d.source.x + rect_width / 2 + linkdiff;
@@ -248,7 +259,7 @@ function init(data){
             })
 
             .attr("x2", function(d) {
-                if(d.value === 1 || d.value === 2 || d.value === 33) {
+                if(d.value === 1 || d.value === 2 || d.value === 33 || d.value === 12  || d.value === 21) {
                     return d.target.x + rect_width / 2;
                 }else if (d.value === 11){
                     return d.target.x + rect_width / 2 + linkdiff;
@@ -256,7 +267,7 @@ function init(data){
             })
 
             .attr("y1", function(d) {
-                if(d.value === 1 || d.value === 2 || d.value === 33) {
+                if(d.value === 1 || d.value === 2 || d.value === 33 || d.value === 12  || d.value === 21) {
                     return d.source.y + rect_width / 2;
                 }else if (d.value === 11){
                     return d.source.y + rect_width / 2 + linkdiff;
@@ -264,12 +275,13 @@ function init(data){
             })
 
             .attr("y2", function(d) {
-                if(d.value === 1 || d.value === 2 || d.value === 33) {
+                if(d.value === 1 || d.value === 2 || d.value === 33 || d.value === 12  || d.value === 21) {
                     return d.target.y + rect_width / 2;
                 }else if (d.value === 11){
                     return d.target.y + rect_width / 2 + linkdiff;
                 }
             })
+            .classed("crosspath" , function(d){     return (d.value === 12  || d.value === 21)})
             .classed("faulytlink" , function(d){     return (d.value ===33)})
             .classed("linkbackup" , function(d){     return (d.value ===2)})
             .classed("prallelpath" , function(d){     return (d.value ===11)})
