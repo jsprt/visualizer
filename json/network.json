@@ -2,35 +2,35 @@
     "primarygroups": 6,
     "secondarygroups": 2,
     "nodes":[
-        {"name":"Keilor DN2","type":"primary","devtype":"switch","group":1},
-        {"name":"Albury DM2","type":"primary","devtype":"switch","group":1},
-        {"name":"Ballarat DB4x","type":"primary","devtype":"switch","group":1},
+        {"name":"KDN2","type":"primary","devtype":"switch","group":1},
+        {"name":"ADM2","type":"primary","devtype":"switch","group":1},
+        {"name":"BDB4x","type":"primary","devtype":"switch","group":1},
 
         {"name":"SDH001","type":"primary","devtype":"switch","group":2},
         {"name":"PDH080","type":"primary","devtype":"switch","group":2},
 
         {"name":"DM8","type":"primary","devtype":"router","group":3},
         {"name":"DM34","type":"primary","devtype":"switch","group":3 , "alarmstatus":"critical"},
-        {"name":"DB4Euro","type":"primary","devtype":"switch","group":3, "alarmstatus":"critical"},
+        {"name":"DB4Eo","type":"primary","devtype":"switch","group":3, "alarmstatus":"critical"},
 
-        {"name":"TranslinkDB2","type":"primary","devtype":"switch","group":4},
+        {"name":"TDB2","type":"primary","devtype":"switch","group":4},
         {"name":"DN2 CBD","type":"primary","devtype":"switch","group":4},
 
         {"name":"DB2B","type":"primary","devtype":"switch","group":5},
         {"name":"DB2LP","type":"primary","devtype":"router","group":5},
 
-        {"name":"SUPSUB","type":"primary","devtype":"switch","group":6},
+        {"name":"SUPS","type":"primary","devtype":"switch","group":6},
 
         {"name":"DB5","type":"primary","devtype":"switch","group":6},
-        {"name":"DN2WODONGA","type":"primary","devtype":"switch","group":6},
+        {"name":"DN2G","type":"primary","devtype":"switch","group":6},
         {"name":"DMx","type":"primary","devtype":"router","group":6},
 
         {"name":"DB5","type":"backup","devtype":"switch","group":7},
-        {"name":"DN2WODONGA","type":"backup","devtype":"switch","group":7},
+        {"name":"DN2X","type":"backup","devtype":"switch","group":7},
         {"name":"DMx","type":"backup","devtype":"switch","group":7},
 
         {"name":"DB5","type":"backup","devtype":"switch","group":8},
-        {"name":"DN2WODONGA","type":"backup","devtype":"switch","group":8},
+        {"name":"DN2Z","type":"backup","devtype":"switch","group":8},
         {"name":"DMx","type":"backup","devtype":"router","group":8}
 
     ],
@@ -51,6 +51,17 @@
         {"source":13,"target":14,"value":1},
         {"source":14,"target":15,"value":1},
 
+
+        {"source":3,"target":16,"value":12},
+        {"source":16,"target":17,"value":1},
+        {"source":17,"target":18,"value":1},
+        {"source":18,"target":19,"value":1},
+        {"source":19,"target":20,"value":1},
+        {"source":20,"target":21,"value":1},
+        {"source":20,"target":21,"value":1},
+        {"source":21,"target":14,"value":21},
+
+
         {"source":0,"target":1,"value":11},
         {"source":1,"target":2,"value":11},
         {"source":2,"target":3,"value":11},
@@ -67,14 +78,16 @@
         {"source":13,"target":14,"value":11},
         {"source":14,"target":15,"value":11},
 
-        {"source":3,"target":16,"value":12},
-        {"source":16,"target":17,"value":2},
-        {"source":17,"target":18,"value":2},
-        {"source":18,"target":19,"value":2},
-        {"source":19,"target":20,"value":2},
-        {"source":20,"target":21,"value":2},
-        {"source":20,"target":21,"value":2},
-        {"source":21,"target":14,"value":21}
+        {"source":3,"target":16,"value":122},
+
+        {"source":16,"target":17,"value":22},
+        {"source":17,"target":18,"value":22},
+        {"source":18,"target":19,"value":22},
+        {"source":19,"target":20,"value":22},
+        {"source":20,"target":21,"value":22},
+        {"source":20,"target":21,"value":22},
+
+        {"source":21,"target":14,"value":221}
 
 
     ]

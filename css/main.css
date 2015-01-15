@@ -5,28 +5,35 @@
 }
 text{
     font: 18px helvetica;
-    text-shadow:10px 10px 10px blue;
+
 
 }
+svg.container{
+    float: left;
+    position: relative;
+}
+
 
 .link {
     stroke: #999;
+    stroke-width:4;
 }
 
 .faulytlink{
     stroke: #d10005;
     stroke-dasharray: 8,8;
+    stroke-width:4;
 }
 
-.prallelpath {
-    stroke: #5d1ed1;
-    stroke-opacity: .6;
-    stroke-dasharray: 15,15;
+.parallelpath {
+    stroke: #11b177;
+    stroke-width:4;
 }
 
 .linkbackup {
-    stroke: #017b00;
+    stroke: #11b177;
     stroke-dasharray: 20,10,5,5,5,10;
+    stroke-width:4;
 }
 
 path.hull {
@@ -55,10 +62,56 @@ path.hull {
 ul {
     list-style-type: none;
 }
+div.my-legend {
+    float: left;
+    position: relative;
+    display: inline-block;
+    border: 1px dashed #999;
+    padding: 10px;
+
+}
 .menu li:hover ul {
     display:inline-block;
     position: relative;
     top: 0;
 }
 
+.my-legend .legend-title {
+    text-decoration: underline;
+    text-align: left;
+    font: 18px helvetica;
+    margin-bottom: 5px;
+    font-weight: bold;
+    font-size: 90%;
 
+}
+.my-legend .legend-scale ul {
+    margin: 0;
+    margin-bottom: 5px;
+    padding: 0;
+    float: left;
+    list-style: none;
+}
+.my-legend .legend-scale ul li {
+    font-size: 100%;
+    list-style: none;
+    margin-left: 0;
+    line-height: 18px;
+    margin-top: 4px;
+    margin-top: 4px;
+}
+.my-legend ul.legend-labels li svg {
+    display: block;
+    float: left;
+    height: 16px;
+    width: 100px;
+    margin-right: 5px;
+    margin-left: 0;
+
+    border: 2px solid #999;
+}
+.my-legend .legend-source {
+    font-size: 70%;
+    color: #999;
+    clear: both;
+}

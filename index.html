@@ -12,6 +12,28 @@
     <li>Alarm Resync</li>
 </ul>
 
+<div class='my-legend'>
+    <div class='legend-title'>Links</div>
+    <div class='legend-scale'>
+        <ul class='legend-labels'>
+            <li><svg>
+                <line  class= "link crosspath weaklink" x1="" y1="7" x2="100" y2="7" />
+            </svg>Physical Path</li>
+            <li><svg>
+                <line class= "parallelpath" x1="0" y1="7" x2="100" y2="7" />
+            </svg>Primary Path</li>
+
+            <li><svg>
+                <line class= "link linkbackup stronglink" x1="0" y1="7" x2="100" y2="7" />
+            </svg>Backup Path</li>
+
+            <li><svg>
+                <line class= "faulytlink" height="10" x1="0" y1="5" x2="100" y2="7" />
+            </svg>Faulty Path</li>
+
+        </ul>
+    </div>
+</div>
 <script src="js/main.js"></script>
 </body>
 </html>

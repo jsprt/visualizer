@@ -37,6 +37,7 @@ var height = 600
 
 var container = d3.select("body")
     .append("svg")
+    .attr("class", "container")
     .attr("height",height)
     .attr("width",width);
 
@@ -79,9 +80,11 @@ function init(data){
         .gravity(0.1)
         .friction(0.9)
         .linkStrength(function(d) {
-            return (d.value === 12  || d.value === 21) ? 0 : 1;
+            return (d.value === 12  || d.value === 21 || d.value === 122  || d.value === 221) ? 0 : 1;
         })
-        .start()
+        .start();
+
+
     //default settings: size 1×1, link strength 1, friction 0.9, distance 20, charge strength -30, gravity strength 0.1, and theta parameter 0.8
 
 
@@ -151,7 +154,7 @@ function init(data){
         .attr("class", "link")
         .style("stroke-width", 5);
 
-    labels = container.selectAll("textlabel")
+    labels = container.selectAll(".textlabel")
         .data(data.nodes)
         .enter()
         .append("text")
@@ -167,7 +170,7 @@ function init(data){
         .enter().append("path")
         .attr("class", "hull")
         .attr("d", drawCluster)
-        .style("fill", function(d) { return color(d.group); })
+        .style("fill", function(d) { return color(d.group); });
 
     // Resolve collisions between nodes.
 
@@ -240,6 +243,14 @@ function init(data){
 
     }
 
+    d3.selectAll("path.hull").append("text").attr("x", 8)
+        .attr("dy", 28)
+        .append("textPath")
+        .attr("class", "textpath")
+        .attr("xlink:href", function (d ,i){
+        return d;
+        })
+        .text("Hello, curved textPath!");
 
     force.on("tick" ,function(e){
 
@@ -253,7 +264,7 @@ function init(data){
             .attr("x1", function(d) {
                 if(d.value === 1 || d.value === 2  || d.value === 33 || d.value === 12  || d.value === 21) {
                     return d.source.x + rect_width / 2;
-                }else if (d.value === 11){
+                }else if (d.value === 11 || d.value === 22 || d.value === 122 || d.value === 221){
                     return d.source.x + rect_width / 2 + linkdiff;
                 }
             })
@@ -261,7 +272,7 @@ function init(data){
             .attr("x2", function(d) {
                 if(d.value === 1 || d.value === 2 || d.value === 33 || d.value === 12  || d.value === 21) {
                     return d.target.x + rect_width / 2;
-                }else if (d.value === 11){
+                }else if (d.value === 11 || d.value === 22 || d.value === 122 || d.value === 221){
                     return d.target.x + rect_width / 2 + linkdiff;
                 }
             })
@@ -269,7 +280,7 @@ function init(data){
             .attr("y1", function(d) {
                 if(d.value === 1 || d.value === 2 || d.value === 33 || d.value === 12  || d.value === 21) {
                     return d.source.y + rect_width / 2;
-                }else if (d.value === 11){
+                }else if (d.value === 11 || d.value === 22 || d.value === 122 || d.value === 221){
                     return d.source.y + rect_width / 2 + linkdiff;
                 }
             })
@@ -277,22 +288,19 @@ function init(data){
             .attr("y2", function(d) {
                 if(d.value === 1 || d.value === 2 || d.value === 33 || d.value === 12  || d.value === 21) {
                     return d.target.y + rect_width / 2;
-                }else if (d.value === 11){
+                }else if (d.value === 11 || d.value === 22 || d.value === 122 || d.value === 221){
                     return d.target.y + rect_width / 2 + linkdiff;
                 }
             })
-            .classed("crosspath" , function(d){     return (d.value === 12  || d.value === 21)})
+            .classed("crosspath" , function(d){     return (d.value === 12  || d.value === 21 || d.value === 122  || d.value === 221)})
             .classed("faulytlink" , function(d){     return (d.value ===33)})
-            .classed("linkbackup" , function(d){     return (d.value ===2)})
-            .classed("prallelpath" , function(d){     return (d.value ===11)})
+            .classed("linkbackup" , function(d){     return (d.value ===22 || d.value ===122 || d.value ===221)})
+            .classed("parallelpath" , function(d){     return (d.value ===11)})
             .classed("link" , function(d){     return (d.value !=2)})
             .classed("weaklink" , function(d){     return (d.source.group !== d.target.group)})
             .classed("stronglink" , function(d){     return (d.source.group === d.target.group)});
 
         devices.each(gravity( 0.2 * e.alpha));
-
-        devices.each(gravity( 0.2 * e.alpha));
-
 
         //devices.each(collide(0.5));
         /*   while (++i < n) {
