@@ -5,35 +5,34 @@
 }
 text{
     font: 18px helvetica;
+    text-shadow:10px 10px 10px blue;
 
-
-}
-svg.container{
-    float: left;
-    position: relative;
 }
 
 
+li a{
+    text-decoration:none ;
+}
 .link {
     stroke: #999;
-    stroke-width:4;
+    stroke-width : 4;
 }
 
 .faulytlink{
     stroke: #d10005;
     stroke-dasharray: 8,8;
-    stroke-width:4;
+    stroke-width : 4;
 }
 
 .parallelpath {
-    stroke: #11b177;
-    stroke-width:4;
+    stroke: #017b00;
+    stroke-width : 4;
 }
 
 .linkbackup {
-    stroke: #11b177;
+    stroke: #017b00;
     stroke-dasharray: 20,10,5,5,5,10;
-    stroke-width:4;
+    stroke-width : 4;
 }
 
 path.hull {
@@ -64,7 +63,7 @@ ul {
 }
 div.my-legend {
     float: left;
-    position: relative;
+
     display: inline-block;
     border: 1px dashed #999;
     padding: 10px;
